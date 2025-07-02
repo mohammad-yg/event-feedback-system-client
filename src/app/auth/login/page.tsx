@@ -14,6 +14,8 @@ import {
 } from "src/components/ui/form";
 import { Input } from "src/components/ui/input";
 import { z } from "zod";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const loginFormSchema = z.object({
   email: z.string().min(3).max(256),
@@ -21,20 +23,31 @@ const loginFormSchema = z.object({
 });
 
 const LoginPage = () => {
+  const router = useRouter();
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "string",
+      password: "string",
     },
   });
 
   const [loading, setLoading] = useState<boolean>(false);
 
   const onSubmit = (values: z.infer<typeof loginFormSchema>) => {
-    setLoading(true)
-    console.log(values);
-    setLoading(false)
+    setLoading(true);
+    signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+    }).then((result) => {
+      if (result?.error) {
+        console.error("Login failed:", result);
+      } else {
+        router.push("/dashboard");
+      }
+      setLoading(false);
+    });
   };
 
   return (
