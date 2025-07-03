@@ -11,7 +11,7 @@ import { Skeleton } from "src/components/ui/skeleton";
 
 interface EventCardProps {
   event: {
-    id: string;
+    id: number;
     title: string;
     description: string;
     location: string;

@@ -8,7 +8,7 @@ import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 import { SERVER_BASE_URL } from "src/lib/services/services-config";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { registerEventService } from "src/lib/services/events/registerEvent";
 
 interface Event {
@@ -22,6 +22,7 @@ interface Event {
 export default function EventDetailPage() {
   const { data: session } = useSession();
   const params = useParams();
+  const router = useRouter();
 
   const { data, error, isLoading } = useApi<{ data: Event }>(
     SERVER_BASE_URL + `/api/events/${params.id}`
@@ -33,11 +34,15 @@ export default function EventDetailPage() {
   const handleRegister = async () => {
     if (event && session) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      registerEventService(event.id, (session as any).accessToken).then(
+      registerEventService(+params.id!, (session as any).accessToken).then(
         (result) => {
           if (result.isSuccess) {
             toast.success("register successfully");
-          } else {
+            router.push('/dashboard')
+          } else if(result.error === 'DuplicateRegistration'){
+            toast.error('You have already registered for this event') 
+          }
+          else {
             toast.error("register failed");
           }
         }
