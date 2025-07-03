@@ -1,4 +1,4 @@
-export type ServiceResult<TData = never> = {
+export type ServiceResult<TData = undefined> = {
     isSuccess: false,
     error: string
 } | {
