@@ -16,6 +16,8 @@ import { Input } from "src/components/ui/input";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
+import { toast } from "sonner";
 
 const loginFormSchema = z.object({
   email: z.string().min(3).max(256),
@@ -41,10 +43,17 @@ const LoginPage = () => {
       email: values.email,
       password: values.password,
     }).then((result) => {
-      if (result?.error) {
-        console.error("Login failed:", result);
-      } else {
+      if (result?.ok) {
         router.push("/dashboard");
+      } else {
+        if (result?.error === "InvalidUsernameOrPassword") {
+          form.setError("email", {
+            message: "username or password is incorrect",
+          });
+          form.setError("password", {});
+        } else {
+          toast.error("An unknown error has occurred");
+        }
       }
       setLoading(false);
     });
@@ -85,7 +94,8 @@ const LoginPage = () => {
             )}
           />
           <Button type="submit" disabled={loading}>
-            Submit
+            Login
+            {loading && <Loader className="size-4 animate-spin" />}
           </Button>
         </form>
       </Form>
