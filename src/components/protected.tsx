@@ -9,7 +9,7 @@ export default function Protected({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/auth/login");
+      router.push("/login");
     }
   }, [status, router]);
 
