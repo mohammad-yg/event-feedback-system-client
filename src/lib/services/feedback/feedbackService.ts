@@ -1,6 +1,5 @@
-import axios from "axios";
+import { axiosInstance } from "../axios-instance";
 import { ServiceResult } from "../service-result";
-import { SERVER_BASE_URL } from "../services-config";
 
 export const feedbackService = async (eventId: number | string, rating: number, comment: string, accessToken: string): Promise<ServiceResult> => {
     try {
@@ -9,11 +8,10 @@ export const feedbackService = async (eventId: number | string, rating: number, 
             rating,
             comment
         }
-        await axios.post(SERVER_BASE_URL + "/api/feedback",
+        await axiosInstance.post("/api/feedback",
             body,
             {
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${accessToken}`,
                 },
             }

@@ -1,15 +1,13 @@
-import axios from "axios";
-import { ServiceResult } from "../service-result";
-import { SERVER_BASE_URL } from "../services-config";
+import type { ServiceResult } from "../service-result";
+import { axiosInstance } from "../axios-instance";
 
 export const registerEventService = async (eventId: number | string, token: string): Promise<ServiceResult> => {
     try {
-        await axios.post(SERVER_BASE_URL + `/api/events/${eventId}/register`, {}, {
+        await axiosInstance.post(`/api/events/${eventId}/register`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         })
-
 
         return {
             isSuccess: true,

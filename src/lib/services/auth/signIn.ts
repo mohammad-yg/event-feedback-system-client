@@ -1,7 +1,5 @@
-import { ServiceResult } from "../service-result";
-import { SERVER_BASE_URL } from "../services-config";
-import https from 'https';
-import axios from 'axios';
+import { axiosInstance } from "../axios-instance";
+import type { ServiceResult } from "../service-result";
 
 export type SignInServiceInput = {
     email: string,
@@ -9,18 +7,14 @@ export type SignInServiceInput = {
 }
 
 export const signInService = async (input: SignInServiceInput): Promise<ServiceResult<{ email: string, accessToken: string }>> => {
-    const url = SERVER_BASE_URL + '/api/auth/login';
+    const url = '/api/auth/login';
     const body = {
         email: input.email,
         password: input.password
     }
 
     try {
-        const response = await axios.post(url, body, {
-            httpsAgent: new https.Agent({
-                rejectUnauthorized: process.env.NODE_ENV !== 'development'
-            })
-        });
+        const response = await axiosInstance.post(url, body, {});
 
         if (response.status == 200) {
             const responseData = (await response.data);
