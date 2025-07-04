@@ -1,52 +1,53 @@
 "use client";
 
-import { useApi } from "src/hooks/useApi";
-import { Button } from "src/components/ui/button";
-import { Calendar, MapPin, Clock } from "lucide-react";
-import { Skeleton } from "src/components/ui/skeleton";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { Calendar, MapPin, Clock } from "lucide-react";
 import { format, parseISO } from "date-fns";
-import { SERVER_BASE_URL } from "src/lib/services/services-config";
 import { useParams, useRouter } from "next/navigation";
-import { registerEventService } from "src/lib/services/events/registerEvent";
 
-interface Event {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  dateTime: string;
-}
+import { Button } from "src/components/ui/button";
+import { Skeleton } from "src/components/ui/skeleton";
+import { useApi } from "src/hooks/useApi";
+import { registerEventService } from "src/lib/services/events/registerEvent";
+import { useEffect } from "react";
+import type { IEvent } from "src/types/event-type";
 
 export default function EventDetailPage() {
   const { data: session } = useSession();
   const params = useParams();
   const router = useRouter();
 
-  const { data, error, isLoading } = useApi<{ data: Event }>(
-    SERVER_BASE_URL + `/api/events/${params.id}`
+  //get event
+  const { data, error, isLoading } = useApi<{ data: IEvent }>(
+    `/api/events/${params.id}`
   );
   const event = data?.data;
-  const eventFinished =
+  //event is finished
+  const isFinished =
     event && parseISO(event.dateTime).getTime() < new Date().getTime();
 
   const handleRegister = async () => {
-    if (event && session?.accessToken) {
-      registerEventService(+params.id!, session.accessToken).then((result) => {
-        if (result.isSuccess) {
-          toast.success("register successfully");
-          router.push("/dashboard");
-        } else if (result.error === "DuplicateRegistration") {
-          toast.error("You have already registered for this event");
-        } else {
-          toast.error("register failed");
-        }
-      });
-    }
+    if (!event || !session?.accessToken || typeof params?.id !== "string")
+      return;
+
+    registerEventService(params.id, session.accessToken).then((result) => {
+      if (result.isSuccess) {
+        toast.success("register successfully");
+        router.push("/dashboard");
+      } else if (result.error === "DuplicateRegistration") {
+        //If the user was previously registered
+        toast.error("You have already registered for this event");
+      } else {
+        //Unknown error
+        toast.error("register failed");
+      }
+    });
   };
 
-  if (error) return <div className="container py-8">Failed to load event</div>;
+  useEffect(() => {
+    if (error) toast.error("Failed to load event");
+  }, [error]);
 
   return (
     <div className="container py-8">
@@ -84,12 +85,12 @@ export default function EventDetailPage() {
             <div>
               <Button
                 onClick={handleRegister}
-                disabled={isLoading || eventFinished}
+                disabled={isLoading || isFinished}
                 variant={"default"}
               >
                 {"Register"}
               </Button>
-              {eventFinished && (
+              {isFinished && (
                 <p className="text-red-500 text-sm mt-1">Event is finished !</p>
               )}
             </div>
@@ -100,7 +101,7 @@ export default function EventDetailPage() {
   );
 }
 
-function EventDetailSkeleton() {
+const EventDetailSkeleton = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
@@ -118,4 +119,4 @@ function EventDetailSkeleton() {
       </div>
     </div>
   );
-}
+};
