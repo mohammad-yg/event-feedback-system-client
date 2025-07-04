@@ -3,12 +3,12 @@ import NextAuth from "next-auth"
 import { JWT } from "next-auth/jwt"
 
 declare module "next-auth" {
-    type User = {
-        email: string | null
+    interface User {
+        email: string
         accessToken: string
     }
 
-    type Session = {
+    interface Session {
         user: User,
         accessToken?: string
     }

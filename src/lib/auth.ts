@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import type { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { signInService } from './services/auth/signIn'
@@ -20,8 +18,10 @@ export const authOptions: NextAuthOptions = {
                 if (!result.isSuccess) throw new Error(result.error)
 
                 return {
+                    id: '',
                     email: result.data.email,
-                    accessToken: result.data.accessToken
+                    name: result.data.email,
+                    accessToken: result.data.accessToken,
                 }
             }
         })
@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token.accessToken = user.accessToken
-                token.email = user.username
+                token.email = user.email
             }
 
             return token
@@ -42,8 +42,9 @@ export const authOptions: NextAuthOptions = {
             if (token) {
                 session.accessToken = token.accessToken
                 session.user = {
-                    name: token.user?.name,
-                    username: token.user?.username
+                    id: '',
+                    email: token.email ?? '',
+                    accessToken: token.accessToken ?? '',
                 }
             }
 
