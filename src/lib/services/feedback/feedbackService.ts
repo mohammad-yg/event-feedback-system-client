@@ -30,6 +30,12 @@ export const feedbackService = async (eventId: number | string, rating: number, 
                 error: 'You have already submitted feedback for this event.'
             }
 
+        if (ex.response.data.errorKey = 'EventIsNotFinished')
+            return {
+                isSuccess: false,
+                error: ex.response.data.message
+            }
+
         return {
             isSuccess: false,
             error: 'An unknown error has occurred'
