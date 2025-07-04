@@ -20,8 +20,6 @@ export const authOptions: NextAuthOptions = {
                 if (!result.isSuccess) throw new Error(result.error)
 
                 return {
-                    id: 0,
-                    name: result.data.email,
                     email: result.data.email,
                     accessToken: result.data.accessToken
                 }
@@ -34,11 +32,8 @@ export const authOptions: NextAuthOptions = {
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.accessToken = user.accessToken as string
-                token.user = {
-                    username: user.username,
-                    name: user.name as string
-                }
+                token.accessToken = user.accessToken
+                token.email = user.username
             }
 
             return token

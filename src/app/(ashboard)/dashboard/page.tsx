@@ -42,8 +42,7 @@ export default function DashboardPage() {
     (url: string) =>
       axios
         .get(url, {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          headers: { Authorization: `Bearer ${(session as any).accessToken}` },
+          headers: { Authorization: `Bearer ${(session)?.accessToken}` },
         })
         .then((result) => result.data)
   );
@@ -64,7 +63,7 @@ export default function DashboardPage() {
       <div className="space-y-8">
         {/* Welcome Section */}
         <section>
-          <h1 className="text-3xl font-bold">Welcome, {session.user?.name}</h1>
+          <h1 className="text-3xl font-bold">Welcome, {session.user?.email}</h1>
           <p className="text-muted-foreground mt-2">
             Here are the events you&apos;ve registered for
           </p>

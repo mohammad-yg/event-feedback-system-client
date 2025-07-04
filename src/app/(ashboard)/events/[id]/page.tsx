@@ -32,21 +32,17 @@ export default function EventDetailPage() {
     event && parseISO(event.dateTime).getTime() < new Date().getTime();
 
   const handleRegister = async () => {
-    if (event && session) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      registerEventService(+params.id!, (session as any).accessToken).then(
-        (result) => {
-          if (result.isSuccess) {
-            toast.success("register successfully");
-            router.push('/dashboard')
-          } else if(result.error === 'DuplicateRegistration'){
-            toast.error('You have already registered for this event') 
-          }
-          else {
-            toast.error("register failed");
-          }
+    if (event && session?.accessToken) {
+      registerEventService(+params.id!, session.accessToken).then((result) => {
+        if (result.isSuccess) {
+          toast.success("register successfully");
+          router.push("/dashboard");
+        } else if (result.error === "DuplicateRegistration") {
+          toast.error("You have already registered for this event");
+        } else {
+          toast.error("register failed");
         }
-      );
+      });
     }
   };
 

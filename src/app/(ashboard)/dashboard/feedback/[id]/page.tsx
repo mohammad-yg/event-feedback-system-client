@@ -26,12 +26,11 @@ export default function FeedbackPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!id || typeof id !== "string" || !rating || !comment) return;
+    if (!id || typeof id !== "string" || !rating || !comment || !session?.accessToken) return;
 
     setIsSubmitting(true);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const accessToken = (session as any)?.accessToken;
+    const accessToken = session?.accessToken;
     feedbackService(id, rating, comment, accessToken).then((result) => {
       if (result.isSuccess) {
         toast.success("Feedback submitted successfully!");
