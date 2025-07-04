@@ -36,10 +36,10 @@ const DashboardPage = () => {
     return <DashboardSkeleton />;
   }
   //Doesn't happen if authorize system is working properly.
-  if (!session) return;
+  if (!session) return
 
   return (
-    <div className="container py-8">
+    <div className="container sm:py-8">
       <div className="space-y-8">
         {/* Welcome Section */}
         <section>
