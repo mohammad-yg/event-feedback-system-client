@@ -1,6 +1,6 @@
 import { format, parseISO } from "date-fns";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { ReactNode } from "react";
 import {
   Card,
   CardContent,
@@ -17,21 +17,19 @@ interface EventCardProps {
     location: string;
     dateTime: string;
   };
+  footer: ReactNode;
 }
 
-export function EventCard({ event }: EventCardProps) {
-  const router = useRouter();
-
+export function EventCard({ event, footer }: EventCardProps) {
   return (
-    <Card
-      className="hover:shadow-lg transition-shadow cursor-pointer"
-      onClick={() => router.push(`/events/${event.id}`)}
-    >
+    <Card className="hover:shadow-lg transition-shadow cursor-pointer">
       <CardHeader>
-        <CardTitle className="truncate">{event.title}</CardTitle>
-        <div className="text-sm text-gray-500">
-          {format(parseISO(event.dateTime), "MMMM d, yyyy")}
-        </div>
+        <Link href={`/events/${event.id}`}>
+          <CardTitle className="truncate">{event.title}</CardTitle>
+          <div className="text-sm text-gray-500">
+            {format(parseISO(event.dateTime), "MMMM d, yyyy")}
+          </div>
+        </Link>
       </CardHeader>
       <CardContent>
         <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
@@ -39,7 +37,7 @@ export function EventCard({ event }: EventCardProps) {
           <span className="truncate">{event.location}</span>
         </div>
       </CardContent>
-      <Link className="hidden" href={`/events/${event.id}`} />
+      {footer}
     </Card>
   );
 }

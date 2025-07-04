@@ -95,7 +95,19 @@ export default function DashboardPage() {
               ) : events?.length ? (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {events.map((event) => (
-                    <EventCard key={event.id} event={event} />
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      footer={
+                        <div className="flex justify-end w-full px-3">
+                          <Button asChild size="sm">
+                            <Link href={`/dashboard/feedback/${event.id}`}>
+                              Feedback
+                            </Link>
+                          </Button>
+                        </div>
+                      }
+                    />
                   ))}
                 </div>
               ) : (
