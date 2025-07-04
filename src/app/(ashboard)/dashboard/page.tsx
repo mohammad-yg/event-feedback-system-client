@@ -126,7 +126,7 @@ function DashboardSkeleton() {
         <CardHeader>
           <Skeleton className="h-6 w-48" />
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <EventCardSkeleton key={i} />
           ))}
