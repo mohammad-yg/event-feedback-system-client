@@ -2,8 +2,7 @@ import { SERVER_BASE_URL } from 'src/lib/services/services-config'
 import useSWR from 'swr'
 
 const fetcher = async <T,>(url: string, accessToken: string | undefined = undefined): Promise<T> => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const headers: any = {}
+    const headers: RequestInit['headers'] = {}
 
     if (accessToken)
         headers['Authorization'] = `Bearer ${accessToken}`
