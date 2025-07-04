@@ -17,7 +17,7 @@ interface EventCardProps {
     location: string;
     dateTime: string;
   };
-  footer: ReactNode;
+  footer?: ReactNode;
 }
 
 export function EventCard({ event, footer }: EventCardProps) {

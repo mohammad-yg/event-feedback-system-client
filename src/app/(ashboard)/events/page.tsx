@@ -4,7 +4,7 @@ import { EventCard, EventCardSkeleton } from "src/components/events/event-card";
 import { SERVER_BASE_URL } from "src/lib/services/services-config";
 
 interface Event {
-  id: string;
+  id: number;
   title: string;
   description: string;
   location: string;
