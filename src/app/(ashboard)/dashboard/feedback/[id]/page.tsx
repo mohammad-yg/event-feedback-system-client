@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { Star, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
+
 import { Button } from "src/components/ui/button";
 import { Textarea } from "src/components/ui/textarea";
-import { toast } from "sonner";
-import { Star, ArrowLeft } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -14,6 +15,7 @@ import {
   CardContent,
 } from "src/components/ui/card";
 import { feedbackService } from "src/lib/services/feedback/feedbackService";
+import { cn } from "src/lib/utils";
 
 export default function FeedbackPage() {
   const { id } = useParams();
@@ -26,7 +28,14 @@ export default function FeedbackPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!id || typeof id !== "string" || !rating || !comment || !session?.accessToken) return;
+    if (
+      !id ||
+      typeof id !== "string" ||
+      !rating ||
+      !comment ||
+      !session?.accessToken
+    )
+      return;
 
     setIsSubmitting(true);
 
@@ -70,11 +79,14 @@ export default function FeedbackPage() {
                     onClick={() => setRating(star)}
                     className="text-2xl focus:outline-none cursor-pointer"
                   >
-                    {rating && star <= rating ? (
-                      <Star className="h-8 w-8 fill-yellow-400 text-yellow-400" />
-                    ) : (
-                      <Star className="h-8 w-8 text-gray-300" />
-                    )}
+                    <Star
+                      className={cn(
+                        "h-8 w-8",
+                        rating && star <= rating
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-gray-300"
+                      )}
+                    />
                   </button>
                 ))}
               </div>
