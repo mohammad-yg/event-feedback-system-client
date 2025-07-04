@@ -35,7 +35,7 @@ const DashboardPage = () => {
   if (isLoadingSession || isLoading) {
     return <DashboardSkeleton />;
   }
-  //Doesn't happen if Protected is working properly.
+  //Doesn't happen if authorize system is working properly.
   if (!session) return;
 
   return (
