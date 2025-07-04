@@ -1,7 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import Link from "next/link";
+
 import { Button } from "src/components/ui/button";
 import {
   Card,
@@ -9,26 +10,16 @@ import {
   CardHeader,
   CardTitle,
 } from "src/components/ui/card";
-import useSWR from "swr";
 import { Skeleton } from "src/components/ui/skeleton";
-import Link from "next/link";
 import { EventCard, EventCardSkeleton } from "src/components/events/event-card";
-import { SERVER_BASE_URL } from "src/lib/services/services-config";
-import axios from "axios";
-
-interface Event {
-  id: number;
-  title: string;
-  description: string;
-  location: string;
-  dateTime: string; // ISO format
-}
+import { useApi } from "src/hooks/useApi";
+import type { IEvent } from "src/types/event-type";
 
 interface Response {
-  registeredEvents: Event[];
+  registeredEvents: IEvent[];
 }
 
-export default function DashboardPage() {
+const DashboardPage = () => {
   const { data: session, status } = useSession();
   const isLoadingSession = status === "loading";
 
@@ -37,26 +28,15 @@ export default function DashboardPage() {
     data: response,
     error,
     isLoading,
-  } = useSWR<Response>(
-    session ? SERVER_BASE_URL + "/api/dashboard" : null,
-    (url: string) =>
-      axios
-        .get(url, {
-          headers: { Authorization: `Bearer ${(session)?.accessToken}` },
-        })
-        .then((result) => result.data)
-  );
+  } = useApi<Response>(session ? "/api/dashboard" : null, session?.accessToken);
+
   const events = response?.registeredEvents;
 
-  console.log({ response, error, isLoading });
-
-  if (isLoadingSession) {
+  if (isLoadingSession || isLoading) {
     return <DashboardSkeleton />;
   }
-
-  if (!session) {
-    redirect("/login?redirect=/dashboard");
-  }
+  //Doesn't happen if Protected is working properly.
+  if (!session) return;
 
   return (
     <div className="container py-8">
@@ -125,10 +105,11 @@ export default function DashboardPage() {
       </div>
     </div>
   );
-}
+};
+export default DashboardPage;
 
 // Loading Skeletons
-function DashboardSkeleton() {
+const DashboardSkeleton = () => {
   return (
     <div className="container py-8 space-y-8">
       <Skeleton className="h-9 w-64" />
@@ -145,4 +126,4 @@ function DashboardSkeleton() {
       </Card>
     </div>
   );
-}
+};
